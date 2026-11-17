@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ルート表</title>
+<link rel="stylesheet" href="style.css">
+<style id="page-style"></style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar no-print">
+    <div class="brand"><span class="logo">ル</span><div><div class="title">ルート表</div><div class="sub" id="facility"></div></div></div>
+    <nav id="tabs">
+      <button data-view="edit" class="active">ルート編集</button>
+      <button data-view="residents">利用者</button>
+      <button data-view="master">項目・色</button>
+      <button data-view="print">印刷</button>
+    </nav>
+    <div class="user"><span id="user-label"></span><button id="btn-reload" class="ghost" title="最新の内容を読み込む">↻ 更新</button><button id="btn-logout" class="ghost">ログアウト</button></div>
+  </header>
+  <div id="demo-banner" class="banner no-print" hidden>デモモードです（このブラウザの中だけに保存されます）。config.js に Supabase の設定を入れると、みんなで共有できます。<button id="btn-demo-reset" class="ghost small">初期データに戻す</button></div>
+
+  <main>
+    <!-- ログイン -->
+    <section id="view-login" class="view login" hidden>
+      <form id="login-form" class="card">
+        <h2>ログイン</h2>
+        <label>メールアドレス<input type="email" id="login-email" required autocomplete="username"></label>
+        <label>パスワード<input type="password" id="login-pass" required autocomplete="current-password"></label>
+        <button type="submit" class="primary">ログイン</button>
+        <p id="login-msg" class="msg"></p>
+      </form>
+    </section>
+
+    <!-- ルート編集 -->
+    <section id="view-edit" class="view" hidden>
+      <div class="toolbar no-print">
+        <div class="seg" id="wd-tabs"></div>
+        <div class="seg" id="range-tabs">
+          <button data-range="all" class="active">全日</button>
+          <button data-range="day">日中 9:00〜18:00</button>
+          <button data-range="night">夜 16:30〜23:30</button>
+          <button data-range="early">深夜〜朝 0:00〜9:30</button>
+        </div>
+        <div class="spacer"></div>
+        <button id="btn-copy-day" class="ghost">この曜日を他の曜日へコピー</button>
+      </div>
+      <div class="legend" id="edit-legend"></div>
+      <div class="grid-wrap"><table class="grid" id="edit-grid"></table></div>
+      <div class="note-box">
+        <label>この曜日のメモ（印刷の下に出ます）<textarea id="day-note" rows="2" placeholder="例：14:00〜14:30 週一回の風呂掃除"></textarea></label>
+      </div>
+    </section>
+
+    <!-- 利用者 -->
+    <section id="view-residents" class="view" hidden>
+      <div class="card">
+        <h2>利用者を追加</h2>
+        <form id="add-resident" class="row-form">
+          <label>部屋番号<input id="nr-room" required inputmode="numeric" placeholder="例：215"></label>
+          <label>名前<input id="nr-name" required placeholder="例：山田"></label>
+          <label>予定のコピー元<select id="nr-copy"><option value="">コピーしない（空で作る）</option></select></label>
+          <button class="primary" type="submit">追加</button>
+        </form>
+        <p class="hint">追加すると、ルート編集・印刷に列が増えます（部屋番号順）。</p>
+      </div>
+      <div class="card">
+        <h2>利用者一覧</h2>
+        <table class="list" id="resident-list"></table>
+        <p class="hint">「表示」を外すと、予定は残したままルート表から隠せます（入院・退去時など）。削除すると予定も消えます。</p>
+      </div>
+    </section>
+
+    <!-- 項目・色 -->
+    <section id="view-master" class="view" hidden>
+      <p class="hint">区分ごとの色と、プルダウンに出す項目を設定します。同じ名前の項目を別の区分に入れることもできます（例：パット交換を「介護」と「施設サービス」の両方に）。</p>
+      <div id="cat-cards" class="cat-cards"></div>
+      <div class="card">
+        <form id="add-cat" class="row-form">
+          <label>区分を追加<input id="nc-name" placeholder="区分名" required></label>
+          <label>色<input type="color" id="nc-color" value="#ffffff"></label>
+          <button class="ghost" type="submit">区分を追加</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 印刷 -->
+    <section id="view-print" class="view" hidden>
+      <div class="card no-print print-opts">
+        <div class="opt"><span class="lbl">時間帯</span>
+          <label><input type="radio" name="p-shift" value="day" checked> 日中 9:00〜18:00（横向き）</label>
+          <label><input type="radio" name="p-shift" value="night"> 夜勤 16:30〜翌9:30（縦向き）</label>
+        </div>
+        <div class="opt"><span class="lbl">用紙</span>
+          <label><input type="radio" name="p-paper" value="A4" checked> A4</label>
+          <label><input type="radio" name="p-paper" value="A3"> A3</label>
+        </div>
+        <div class="opt"><span class="lbl">曜日</span><span id="p-days"></span></div>
+        <div class="opt"><span class="lbl">色</span>
+          <label><input type="checkbox" id="p-color" checked> 区分の色を付ける</label>
+        </div>
+        <button id="btn-print" class="primary">印刷する</button>
+        <p class="hint">印刷画面では「余白：デフォルト」「倍率：100%」「背景のグラフィック：オン」にしてください（色が出ないときは背景のグラフィックを確認）。</p>
+      </div>
+      <div id="print-area"></div>
+    </section>
+  </main>
+
+  <dialog id="dlg-copy">
+    <form method="dialog">
+      <h3 id="dlg-copy-title">コピー</h3>
+      <p id="dlg-copy-desc" class="hint"></p>
+      <div id="dlg-copy-days" class="days"></div>
+      <label class="chk"><input type="checkbox" id="dlg-copy-clear" checked> コピー先の予定を消してから上書きする</label>
+      <div class="dlg-btns"><button value="cancel" class="ghost">やめる</button><button value="ok" class="primary" id="dlg-copy-ok">コピーする</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<script src="config.js"></script>
+<script src="demo-data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
