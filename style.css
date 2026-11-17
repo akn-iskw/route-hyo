@@ -152,9 +152,28 @@ dialog h3 { margin: 0 0 6px; }
   body { background: #fff; }
   .no-print, .topbar, .banner, .toast, dialog { display: none !important; }
   main { padding: 0; }
-  .view:not(#view-print) { display: none !important; }
+  .view:not(#view-kakutei) { display: none !important; }
   #print-area { display: block; }
   .sheet { box-shadow: none; break-after: page; page-break-after: always; }
   .sheet:last-child { break-after: auto; page-break-after: auto; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* 確定 */
+.kakutei-bar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; margin: 0 0 8px; border-radius: 8px; background: #eaf6ee; border: 1px solid #b9e0c5; font-size: 13px; }
+.kakutei-bar.dirty { background: #fff4e5; border-color: #f3c98b; }
+.kakutei-bar .status { flex: 1; }
+.kakutei-bar .muted, .muted { color: var(--muted); font-size: 12px; }
+.kinfo { font-size: 13px; padding-bottom: 4px; border-bottom: 1px solid #edf0f3; margin-bottom: 4px; }
+.kinfo .warn { color: #b54708; font-size: 12px; }
+.print-opts .sep { margin-left: 14px; }
+.dl-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.dl-btns button { padding: 8px 18px; }
+.ptable th small { font-size: .7em; font-weight: 400; margin-left: 2px; }
+.sheet.by-person .ptable .p-name th { font-size: calc(4.2mm * var(--k)); height: calc(7mm * var(--k)); }
+.sheet.dense .ptable td { font-size: calc(2.9mm * var(--k)); }
+.sheet.dense .ptable tr.hour th { font-size: calc(3mm * var(--k)); }
+.sheet.dense .ptable tr.half th { font-size: calc(2.3mm * var(--k)); }
+.p-legend .chip, .p-title, .p-stamp { white-space: nowrap; }
+.sheet.port .p-legend .chip { padding: 0 calc(1.2mm * var(--k)); }
+.sheet.port .p-stamp { font-size: calc(2.2mm * var(--k)); }

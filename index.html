@@ -13,9 +13,9 @@
     <div class="brand"><span class="logo">ル</span><div><div class="title">ルート表</div><div class="sub" id="facility"></div></div></div>
     <nav id="tabs">
       <button data-view="edit" class="active">ルート編集</button>
+      <button data-view="kakutei">ルート表（確定）</button>
       <button data-view="residents">利用者</button>
       <button data-view="master">項目・色</button>
-      <button data-view="print">印刷</button>
     </nav>
     <div class="user"><span id="user-label"></span><button id="btn-reload" class="ghost" title="最新の内容を読み込む">↻ 更新</button><button id="btn-logout" class="ghost">ログアウト</button></div>
   </header>
@@ -45,6 +45,10 @@
         </div>
         <div class="spacer"></div>
         <button id="btn-copy-day" class="ghost">この曜日を他の曜日へコピー</button>
+      </div>
+      <div class="kakutei-bar no-print" id="kakutei-bar">
+        <span class="status" id="kakutei-status"></span>
+        <button id="btn-kakutei" class="primary">確定する</button>
       </div>
       <div class="legend" id="edit-legend"></div>
       <div class="grid-wrap"><table class="grid" id="edit-grid"></table></div>
@@ -85,23 +89,29 @@
       </div>
     </section>
 
-    <!-- 印刷 -->
-    <section id="view-print" class="view" hidden>
+    <!-- 確定版（見るだけ・印刷） -->
+    <section id="view-kakutei" class="view" hidden>
       <div class="card no-print print-opts">
-        <div class="opt"><span class="lbl">時間帯</span>
-          <label><input type="radio" name="p-shift" value="day" checked> 日中 9:00〜18:00（横向き）</label>
-          <label><input type="radio" name="p-shift" value="night"> 夜勤 16:30〜翌9:30（縦向き）</label>
+        <div class="kinfo" id="kakutei-info"></div>
+        <div class="opt"><span class="lbl">表示</span>
+          <label><input type="radio" name="p-mode" value="day" checked> 曜日ごと</label>
+          <label><input type="radio" name="p-mode" value="person"> 人ごと（1人1枚・月〜日）</label>
         </div>
+        <div class="opt"><span class="lbl">時間帯</span>
+          <label><input type="radio" name="p-shift" value="day" checked> 日中 9:00〜18:00</label>
+          <label><input type="radio" name="p-shift" value="night"> 夜勤 16:30〜翌9:30</label>
+          <label><input type="radio" name="p-shift" value="all"> 全日 0:00〜23:30</label>
+        </div>
+        <div class="opt" id="p-days-row"><span class="lbl">曜日</span><span id="p-days"></span></div>
+        <div class="opt" id="p-people-row" hidden><span class="lbl">利用者</span><span id="p-people"></span></div>
+        <div class="opt"><span class="lbl">区分</span><span id="p-cats"></span></div>
         <div class="opt"><span class="lbl">用紙</span>
           <label><input type="radio" name="p-paper" value="A4" checked> A4</label>
           <label><input type="radio" name="p-paper" value="A3"> A3</label>
+          <label class="sep"><input type="checkbox" id="p-color" checked> 区分の色を付ける</label>
         </div>
-        <div class="opt"><span class="lbl">曜日</span><span id="p-days"></span></div>
-        <div class="opt"><span class="lbl">色</span>
-          <label><input type="checkbox" id="p-color" checked> 区分の色を付ける</label>
-        </div>
-        <button id="btn-print" class="primary">印刷する</button>
-        <p class="hint">印刷画面では「余白：デフォルト」「倍率：100%」「背景のグラフィック：オン」にしてください（色が出ないときは背景のグラフィックを確認）。</p>
+        <div class="dl-btns"><button id="btn-print" class="primary">🖨 印刷する</button><button id="btn-xlsx" class="ghost">Excelでダウンロード</button><button id="btn-pdf" class="ghost">PDFでダウンロード</button></div>
+        <p class="hint">印刷画面では「倍率：100%」「背景のグラフィック：オン」にしてください（色が出ないときは背景のグラフィックを確認）。</p>
       </div>
       <div id="print-area"></div>
     </section>
